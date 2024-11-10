@@ -1,0 +1,5 @@
+vending_machine_tb
+*.o
+*.vcd
+*.cf
+
