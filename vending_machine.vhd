@@ -4,6 +4,7 @@ use ieee.std_logic_1164.all;
 entity vending_machine is
   port (
     clk               : in  std_ulogic;
+    reset             : in  std_ulogic;
     coin_inserted     : in  std_ulogic;
     dispense_beverage : out std_ulogic;
     return_coin       : out std_ulogic
@@ -19,9 +20,11 @@ architecture behavior of vending_machine is
 begin
 
   -- state transition process
-  vend_process: process (clk)
+  vend_process: process (clk, reset)
   begin
-    if rising_edge(clk) then
+    if reset = '1' then
+      current_state <= WAIT_FIRST_COIN;
+    elsif rising_edge(clk) then
       current_state <= next_state;
     end if;
   end process vend_process;

@@ -9,6 +9,7 @@ architecture behavior of vending_machine_tb is
   component vending_machine is
     port (
       clk               : in  std_ulogic;
+      reset             : in  std_ulogic;
       coin_inserted     : in  std_ulogic;
       dispense_beverage : out std_ulogic;
       return_coin       : out std_ulogic
@@ -31,6 +32,7 @@ begin
   vend0 : vending_machine
     port map (
       clk               => clk,
+      reset             => reset,
       coin_inserted     => coin_inserted,
       dispense_beverage => dispense_beverage,
       return_coin       => return_coin
