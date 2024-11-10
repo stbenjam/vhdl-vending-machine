@@ -1,75 +1,79 @@
-
 library ieee;
-  use ieee.std_logic_1164.all;
+use ieee.std_logic_1164.all;
 
-entity VENDING_MACHINE is
+entity vending_machine is
   port (
-    CLK               : in    std_ulogic;
-    COIN_INSERTED     : in    std_ulogic;
-    DISPENSE_BEVERAGE : out   std_ulogic;
-    RETURN_COIN       : out   std_ulogic
+    clk               : in  std_ulogic;
+    coin_inserted     : in  std_ulogic;
+    dispense_beverage : out std_ulogic;
+    return_coin       : out std_ulogic
   );
-end entity VENDING_MACHINE;
+end entity vending_machine;
 
-architecture BEHAVIOR of VENDING_MACHINE is
+architecture behavior of vending_machine is
 
-  type states is (IDLE_1, DISPENSE_1, IDLE_2, DISPENSE_2, IDLE_FREE, DISPENSE_FREE);
-
-  signal current_state : states := IDLE_1;
+  -- state definitions
+  type states is (WAIT_FIRST_COIN, DISPENSE_PAID_1, WAIT_SECOND_COIN, DISPENSE_PAID_2, WAIT_FREE_COIN, DISPENSE_FREE);
+  signal current_state, next_state : states := WAIT_FIRST_COIN;
 
 begin
 
-  vend_process: process is
-  variable next_state : states;
-begin
+  -- state transition process
+  vend_process: process (clk)
+  begin
+    if rising_edge(clk) then
+      current_state <= next_state;
+    end if;
+  end process vend_process;
 
-  wait until CLK'event and CLK = '1';
+  -- next state logic
+  next_state_logic: process (current_state, coin_inserted)
+  begin
+    case current_state is
 
-  case current_state is
+      when WAIT_FIRST_COIN =>
+        if coin_inserted = '1' then
+          next_state <= DISPENSE_PAID_1;
+        else
+          next_state <= WAIT_FIRST_COIN;
+        end if;
 
-    when IDLE_1 =>
+      when DISPENSE_PAID_1 =>
+        next_state <= WAIT_SECOND_COIN;
 
-      if (COIN_INSERTED = '1') then
-        next_state := DISPENSE_1;
-      else
-        next_state := IDLE_1;
-      end if;
+      when WAIT_SECOND_COIN =>
+        if coin_inserted = '1' then
+          next_state <= DISPENSE_PAID_2;
+        else
+          next_state <= WAIT_SECOND_COIN;
+        end if;
 
-    when DISPENSE_1 =>
-      next_state := IDLE_2;
-    when IDLE_2 =>
+      when DISPENSE_PAID_2 =>
+        next_state <= WAIT_FREE_COIN;
 
-      if (COIN_INSERTED = '1') then
-        next_state := DISPENSE_2;
-      else
-        next_state := IDLE_2;
-      end if;
+      when WAIT_FREE_COIN =>
+        if coin_inserted = '1' then
+          next_state <= DISPENSE_FREE;
+        else
+          next_state <= WAIT_FREE_COIN;
+        end if;
 
-    when DISPENSE_2 =>
-      next_state := IDLE_FREE;
-    when IDLE_FREE =>
+      when DISPENSE_FREE =>
+        next_state <= WAIT_FIRST_COIN;
 
-      if (COIN_INSERTED = '1') then
-        next_state := DISPENSE_FREE;
-      else
-        next_state := IDLE_FREE;
-      end if;
+      when others =>
+        next_state <= WAIT_FIRST_COIN;
 
-    when DISPENSE_FREE =>
-      next_state := IDLE_1;
+    end case;
+  end process next_state_logic;
 
-  end case;
+  -- output logic for dispensing beverage and returning coin
+  with current_state select
+    dispense_beverage <= '1' when DISPENSE_PAID_1 | DISPENSE_PAID_2 | DISPENSE_FREE,
+                         '0' when others;
 
-  current_state <= next_state;
+  with current_state select
+    return_coin <= '1' when DISPENSE_FREE,
+                   '0' when others;
 
-end process vend_process;
-
-with current_state select DISPENSE_BEVERAGE <=
-                                               '1' when DISPENSE_1 | DISPENSE_2 | DISPENSE_FREE,
-                                               '0' when others;
-
-with current_state select RETURN_COIN <=
-                                         '1' when DISPENSE_FREE,
-                                         '0' when others;
-
-end architecture BEHAVIOR;
+end architecture behavior;
