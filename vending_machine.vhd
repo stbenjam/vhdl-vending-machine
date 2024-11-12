@@ -18,12 +18,13 @@ architecture behavior of vending_machine is
 
   signal current_state : states := WAIT_FIRST_COIN;
 begin
-  vend_fsm: process (clk, reset) is
+  process is
       variable next_state : states := current_state;
   begin
+   wait until falling_edge(clk);
     if reset = '1' then
       current_state <= WAIT_FIRST_COIN;
-    elsif falling_edge(clk) then
+    else
       case current_state is
         when WAIT_FIRST_COIN =>
             if coin_inserted = '1' then
@@ -61,7 +62,7 @@ begin
 
       current_state <= next_state;
     end if;
-  end process vend_fsm;
+  end process;
 
   -- Notice all control signals are outside the process and determined only by the state:
   -- combiational logic only!
