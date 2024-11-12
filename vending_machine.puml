@@ -1,0 +1,27 @@
+@startuml
+
+[*] --> WAIT_FIRST_COIN
+
+WAIT_FIRST_COIN: Wait for first coin
+DISPENSE_PAID_1: Dispense first paid beverage
+WAIT_SECOND_COIN: Wait for second coin
+DISPENSE_PAID_2: Dispense second paid beverage
+WAIT_FREE_COIN: Wait for free coin
+DISPENSE_FREE: Dispense free beverage
+
+WAIT_FIRST_COIN --> DISPENSE_PAID_1 : coin_inserted = '1'
+WAIT_FIRST_COIN --> WAIT_FIRST_COIN : coin_inserted = '0'
+
+DISPENSE_PAID_1 --> WAIT_SECOND_COIN
+
+WAIT_SECOND_COIN --> DISPENSE_PAID_2 : coin_inserted = '1'
+WAIT_SECOND_COIN --> WAIT_SECOND_COIN : coin_inserted = '0'
+
+DISPENSE_PAID_2 --> WAIT_FREE_COIN
+
+WAIT_FREE_COIN --> DISPENSE_FREE : coin_inserted = '1'
+WAIT_FREE_COIN --> WAIT_FREE_COIN : coin_inserted = '0'
+
+DISPENSE_FREE --> WAIT_FIRST_COIN
+
+@enduml
