@@ -25,6 +25,10 @@ write a solution that does this in VHDL.  This repo contains a sample
 of a finite state machine in VHDL, a testbench, and a Makefile that uses
 GHDL to simulate it.
 
+## State machine 
+
+![vending_machine.png](vending_machine.png)
+
 ## Testing with docker
 
 ```
