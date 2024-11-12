@@ -2,12 +2,12 @@
 
 [*] --> WAIT_FIRST_COIN
 
-WAIT_FIRST_COIN: Wait for first coin
-DISPENSE_PAID_1: Dispense first paid beverage
-WAIT_SECOND_COIN: Wait for second coin
-DISPENSE_PAID_2: Dispense second paid beverage
-WAIT_FREE_COIN: Wait for free coin
-DISPENSE_FREE: Dispense free beverage
+WAIT_FIRST_COIN:  dispense_beverage = '0'\nreturn_coin = '0'
+DISPENSE_PAID_1:  dispense_beverage = '1'\nreturn_coin = '0'
+WAIT_SECOND_COIN: dispense_beverage = '0'\nreturn_coin = '0'
+DISPENSE_PAID_2:  dispense_beverage = '1'\nreturn_coin = '0'
+WAIT_FREE_COIN:   dispense_beverage = '0'\nreturn_coin = '0'
+DISPENSE_FREE:    dispense_beverage = '1'\nreturn_coin = '1'
 
 WAIT_FIRST_COIN --> DISPENSE_PAID_1 : coin_inserted = '1'
 WAIT_FIRST_COIN --> WAIT_FIRST_COIN : coin_inserted = '0'
