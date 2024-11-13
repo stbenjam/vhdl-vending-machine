@@ -23,7 +23,7 @@ begin
   begin
    wait until falling_edge(clk);
     if reset = '1' then
-      current_state <= WAIT_FIRST_COIN;
+      next_state := WAIT_FIRST_COIN;
     else
       case current_state is
         when WAIT_FIRST_COIN =>
